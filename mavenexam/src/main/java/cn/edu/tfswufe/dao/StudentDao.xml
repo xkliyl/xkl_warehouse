@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.edu.tfswufe.dao.StudentDao">
+    <!--公告-->
+    <select id="findALlNoticeByPower" resultType="cn.edu.tfswufe.model.Notice">
+        select * from notice
+        <where>
+            power = #{power}
+        </where>
+        group by noticeid
+        order by ntime desc
+    </select>
+    <select id="findAdminNotice" resultType="cn.edu.tfswufe.model.Notice">
+        select * from notice
+        <where>
+            power = "student" or power = "all"
+        </where>
+        order by ntime desc
+    </select>
+    <select id="findAllNoticeLike" resultType="cn.edu.tfswufe.model.Notice">
+        select * from notice
+        <where>
+            power = #{power} and ntitle like "%" #{ntitle} "%"
+        </where>
+        order by ntime desc
+    </select>
+    <select id="findAdminNoticeLike" resultType="cn.edu.tfswufe.model.Notice">
+        select * from notice
+        <where>
+            (power = "all" or power = "student")
+            and ntitle like "%" #{ntitle} "%"
+        </where>
+        order by ntime desc
+    </select>
+    <!--试卷-->
+    <select id="studentFindAllTest" resultType="cn.edu.tfswufe.model.TestToStudent">
+        select t1.testid,t1.cid,t1.crid,t2.testtitle from testtostudent t1,test t2
+        <where>
+            cid = #{cid} and crid = #{crid} and t1.testid = t2.testid
+        </where>
+    </select>
+    <select id="answerTest" resultType="cn.edu.tfswufe.model.TeacherTestPaper">
+        select q.qid,q.questiontype,q.title,q.optiona,q.optionb,q.optionc,q.optiond,t.testid from
+        question q,teachertestpaper t
+        <where>
+            t.testid = #{testid} and q.qid = t.qid
+        </where>
+    </select>
+    <insert id="writeAnswer">
+        insert into studentanswer(sno,testid,qid,myanswer) values
+        (#{sno},#{testid},#{qid},#{myanswer})
+    </insert>
+    <update id="changeAnswer">
+        update studentanswer
+        <set>
+            myanswer = #{myanswer}
+        </set>
+        <where>
+            sno = #{sno} and testid = #{testid} and qid = #{qid}
+        </where>
+    </update>
+    <select id="findAllGrade" resultType="cn.edu.tfswufe.model.TestPaper">
+        select * from testpaper
+        <where>
+            sno = #{sno}
+        </where>
+    </select>
+    <select id="findNoDoTestPaper" resultType="cn.edu.tfswufe.model.TestPaper">
+        select t.testtitle,t.testid,tp.grade from test t,testpaper tp
+        <where>
+            t.crid = #{crid} and tp.sno = #{sno} and tp.testid = t.testid
+        </where>
+    </select>
+    <select id="findAllExamination" resultType="cn.edu.tfswufe.model.Examination">
+        select testtitle,testid from test
+        <where>
+            crid = #{crid}
+        </where>
+    </select>
+    <!--课程-->
+    <select id="studentFindAllCourse" resultType="cn.edu.tfswufe.model.Course">
+        select  cr.crid,cr.crname from student st,course cr,classandcourse clac
+        <where>
+            st.sno = #{sno} and st.cid = clac.cid and cr.crid = clac.crid
+        </where>
+    </select>
+    <select id="findLecture" resultType="cn.edu.tfswufe.model.Lecture">
+        select tid from lecture
+        <where>
+            cid = #{cid}
+        </where>
+        group by tid
+    </select>
+    <!--个人信息-->
+    <select id="myself" resultType="cn.edu.tfswufe.model.Student">
+        select * from student
+        <where>
+            sno = #{sno}
+        </where>
+    </select>
+    <!--密码-->
+    <update id="updatePassword">
+        update status
+        <set>
+            password = #{password}
+        </set>
+        <where>
+            uid = #{uid} and power = 2
+        </where>
+    </update>
+    <select id="findTeacherTestPaper" resultType="cn.edu.tfswufe.model.TeacherTestPaper">
+        select t.testid,t.testtitle,q.questiontype,q.title,q.qid,
+        q.optiona,q.optionb,q.optionc,q.optiond,q.correct from
+        teachertestpaper tep,question q,test t
+        <where>
+            tep.testid = #{testid}  and q.qid = tep.qid
+            and tep.testid = t.testid
+        </where>
+    </select>
+    <insert id="writeTestPaper">
+        insert into testpaper(testid,sno) values (#{testid},#{sno})
+    </insert>
+</mapper>

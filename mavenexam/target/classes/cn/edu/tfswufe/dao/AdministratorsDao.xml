@@ -1,0 +1,278 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.edu.tfswufe.dao.AdministratorsDao">
+    <!--用户-->
+    <update id="recoveryPassword">
+        update status
+        <set>
+            <if test="power == 1">password = "1234",</if>
+            <if test="power == 2">password = "123"</if>
+        </set>
+        <where>
+            uid = #{uid}
+        </where>
+    </update>
+    <select id="queryOneStatus" resultType="cn.edu.tfswufe.model.Status">
+        select uid,power,password from status
+        <where>
+            uid = #{uid}
+        </where>
+    </select>
+    <update id="updateStatus">
+        update status
+        <set>
+            username = #{username}
+        </set>
+        <where>
+            uid = #{uid}
+        </where>
+    </update>
+    <delete id="deleteStatus">
+        delete from status
+        <where>
+            uid = #{uid}
+        </where>
+    </delete>
+    <!--教师-->
+    <select id="findAllTeacher" resultType="cn.edu.tfswufe.model.Teacher">
+        select * from teacher
+    </select>
+    <select id="findOneTeacher" resultType="cn.edu.tfswufe.model.Teacher">
+        select * from teacher
+        <where>
+            tid = #{tid}
+        </where>
+    </select>
+    <insert id="addTeacher">
+        insert into teacher values (#{tid},#{tname},#{tbirthday},#{tsex})
+    </insert>
+    <update id="updateTeacher">
+        update teacher
+        <set>
+            tname = #{tname}
+        </set>
+        <where>
+            tid = #{tid}
+        </where>
+    </update>
+    <delete id="deleteTeacher">
+        delete from teacher
+        <where>
+            tid = #{tid}
+        </where>
+    </delete>
+    <!--课程-->
+    <select id="findAllCourse" resultType="cn.edu.tfswufe.model.Course">
+        select c.crid,c.crname,c.mid,m.majorname from course c,major m
+        <where>
+            c.mid = m.mid
+        </where>
+    </select>
+    <select id="findOneCourse" resultType="cn.edu.tfswufe.model.Course">
+        select * from course
+        <where>
+            crid = #{crid}
+        </where>
+    </select>
+    <insert id="addCourse">
+        insert into course values (#{crid},#{crname},#{mid})
+    </insert>
+    <update id="updateCourse">
+        update course
+        <set>
+            crname = #{crname}
+        </set>
+        <where>
+            crid = #{crid}
+        </where>
+    </update>
+    <delete id="deleteCourse">
+        delete from course
+        <where>
+            crid = #{crid}
+        </where>
+    </delete>
+    <!--班级-->
+    <select id="findAllClass" resultType="cn.edu.tfswufe.model.Classes">
+        select c.cid,c.classname,c.mid,m.majorname from class c,major m
+        <where>
+            c.mid = m.mid
+        </where>
+    </select>
+    <select id="findOneClass" resultType="cn.edu.tfswufe.model.Classes">
+        select cid,classname from class
+        <where>
+            cid = #{cid}
+        </where>
+    </select>
+    <insert id="addClass">
+        insert into class values (#{cid},#{classname},#{mid})
+    </insert>
+    <update id="updateClass">
+        update class
+        <set>
+            classname = #{classname}
+        </set>
+        <where>
+            cid = #{cid}
+        </where>
+    </update>
+    <delete id="deleteClass">
+        delete from class
+        <where>
+            cid = #{cid}
+        </where>
+    </delete>
+    <!--学生-->
+    <select id="findAllStudent" resultType="cn.edu.tfswufe.model.Student">
+        select * from student
+    </select>
+    <insert id="addStudent">
+        insert into student values (#{sno},#{sname},#{sbirthday},#{ssex},#{cid})
+    </insert>
+    <update id="updateStudent">
+        update student
+        <set>
+            cid = #{cid}
+        </set>
+        <where>
+            sno = #{sno}
+        </where>
+    </update>
+
+    <delete id="deleteStudent">
+        delete from student
+        <where>
+            sno = #{sno}
+        </where>
+    </delete>
+    <!--专业-->
+    <select id="findAllMajor" resultType="cn.edu.tfswufe.model.Major">
+        select m.mid,m.majorname,m.fid,f.facultyname from major m,faculty f
+        <where>
+            m.fid = f.fid
+        </where>
+    </select>
+    <insert id="addMajor">
+        insert into major values (#{mid},#{majorname},#{fid})
+    </insert>
+    <update id="updateMajor">
+        update major
+        <set>
+            majorname = #{majorname},fid = #{fid}
+        </set>
+        <where>
+            mid = #{mid}
+        </where>
+    </update>
+    <delete id="deleteMajor">
+        delete from major
+        <where>
+            mid = #{mid}
+        </where>
+    </delete>
+    <!--公告-->
+    <select id="findAllNotice" resultType="cn.edu.tfswufe.model.Notice">
+        select * from notice order by ntime desc
+    </select>
+    <select id="findNoticeLike" resultType="cn.edu.tfswufe.model.Notice">
+        select * from notice
+        <where>
+            ntitle like "%" #{ntitle} "%"
+        </where>
+    </select>
+    <select id="findOneNotice" resultType="cn.edu.tfswufe.model.Notice">
+        select * from notice
+        <where>
+            noticeid = #{noticeid}
+        </where>
+    </select>
+    <insert id="addNotice">
+        insert into notice values (#{ntitle},#{ncontent},#{ntime},#{power})
+    </insert>
+    <update id="updateNotice">
+        update notice
+        <set>
+            ntitle = #{ntitle},ncontent = #{ncontent},ntime = #{ntime}
+        </set>
+        <where>
+            noticeid = #{noticeid}
+        </where>
+    </update>
+    <delete id="deleteNotice">
+        delete from notice
+        <where>
+            noticeid = #{noticeid}
+        </where>
+    </delete>
+    <!--分配课程-->
+    <select id="findAllLectureByTeacher" resultType="cn.edu.tfswufe.model.Lecture">
+        select l.tid,cr.crname,c.classname from
+         lecture l,course cr,class c
+         <where>
+            l.cid = c.cid and l.crid = cr.crid
+         </where>
+    </select>
+    <select id="findAllLectureByTeacherId" resultType="cn.edu.tfswufe.model.Lecture">
+        select l.tid,l.cid,l.crid,cr.crname,c.classname from
+        lecture l,course cr,class c
+        <where>
+            tid = #{tid} and l.cid = c.cid and l.crid = cr.crid
+        </where>
+    </select>
+    <select id="findLectureByTidAndCrid" resultType="cn.edu.tfswufe.model.Lecture">
+        select l.cid,c.classname from lecture l,class c,
+        test t1
+        <where>
+            l.tid = #{tid} and l.crid = #{crid} and t1.crid = l.crid and l.cid = c.cid
+        </where>
+    </select>
+    <select id="findOneLecture" resultType="cn.edu.tfswufe.model.Lecture">
+        select * from lecture
+        <where>
+            tid = #{tid} and cid = #{cid} and crid = #{crid}
+        </where>
+    </select>
+    <select id="findOneClassAndCourse" resultType="cn.edu.tfswufe.model.ClassAndCourse">
+        select * from classandcourse
+        <where>
+            cid = #{cid} and crid = #{crid}
+        </where>
+    </select>
+    <insert id="addLectureForTeacher">
+        insert into lecture values (#{tid},#{cid},#{crid})
+    </insert>
+    <insert id="addClassAndCourse">
+        insert into classandcourse values (#{cid},#{crid})
+    </insert>
+
+    <delete id="deleteLecture">
+        delete from lecture
+        <where>
+            tid = #{tid} and cid = #{cid} and crid = #{crid}
+        </where>
+    </delete>
+    <delete id="deleteClassAndCourse">
+        delete from classandcourse
+        <where>
+            cid = #{cid} and crid = #{crid}
+        </where>
+    </delete>
+    <delete id="deleteAllLectureByTid">
+        delete from lecture
+        <where>
+            tid = #{tid}
+        </where>
+    </delete>
+    <!--修改个人信息-->
+    <update id="updateAdmin">
+        update status
+        <set>
+            password = #{password}
+        </set>
+        <where>
+            uid = #{uid}
+        </where>
+    </update>
+
+</mapper>

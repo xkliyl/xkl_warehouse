@@ -1,0 +1,286 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.edu.tfswufe.dao.TeacherDao">
+    <!--学生-->
+    <select id="findAllStudentByClass" resultType="cn.edu.tfswufe.model.Student">
+        select * from student
+        <where>
+            cid = #{cid}
+        </where>
+    </select>
+    <select id="findOneStudent" resultType="cn.edu.tfswufe.model.Student">
+        select * from student
+        <where>
+            sno = #{sno} and cid = #{cid}
+        </where>
+    </select>
+    <update id="recoveryPassword">
+        update status
+        <set>
+            <if test="power == 2">password = "123"</if>
+        </set>
+        <where>
+            uid = #{uid}
+        </where>
+    </update>
+<!--    <update id="updateStudent" >-->
+<!--        update status-->
+<!--        <set>-->
+<!--            password = "123"-->
+<!--        </set>-->
+<!--        <where>-->
+<!--            uid = #{uid}-->
+<!--        </where>-->
+<!--    </update>-->
+    <!--公告-->
+    <select id="findAllNotice" resultType="cn.edu.tfswufe.model.Notice">
+        select * from notice
+        <where>
+            power = "all" or power = "teacher" or power = #{power}
+        </where>
+        order by ntime desc
+    </select>
+    <select id="findNoticeLike" resultType="cn.edu.tfswufe.model.Notice">
+        select * from notice
+        <where>
+            (power = #{power} or power = "all" or power = "teacher")
+            and ntitle like "%" #{ntitle} "%"
+        </where>
+        order by ntime desc
+    </select>
+    <insert id="addNotice">
+        insert into notice values (#{ntitle},#{ncontent},#{ntime},#{power})
+    </insert>
+    <update id="updateNotice">
+        update notice
+        <set>
+            ntitle = #{ntitle},ncontent = #{ncontent},ntime = #{ntime}
+        </set>
+        <where>
+            noticeid = #{noticeid} and power = #{power}
+        </where>
+    </update>
+    <delete id="deleteNotice">
+        delete from notice
+        <where>
+            noticeid = #{noticeid} and power = #{power}
+        </where>
+    </delete>
+    <!--题目-->
+    <select id="findAllQuestion" resultType="cn.edu.tfswufe.model.Question">
+        select * from question
+        <where>
+            power = #{power}
+        </where>
+        order by createtime
+    </select>
+    <select id="findOneQuestion" resultType="cn.edu.tfswufe.model.Question">
+        select * from question
+        <where>
+            power = #{power} and qid = #{qid}
+        </where>
+    </select>
+    <select id="findOneTeacherTestPaper" resultType="cn.edu.tfswufe.model.TeacherTestPaper">
+        select * from teachertestpaper
+        <where>
+            testid = #{testid} and qid = #{qid}
+        </where>
+    </select>
+    <insert id="addQuestion">
+        insert into question(questiontype,title,optiona,optionb,optionc,optiond,answer,correct,createtime,power) values
+        (#{questiontype},#{title},#{optiona},#{optionb},#{optionc},#{optiond},#{answer},#{correct},#{createtime},#{power})
+    </insert>
+    <update id="updateQuestion">
+        update question
+        <set>
+            questiontype = #{questiontype},title = #{title},
+            optiona = #{optiona},optionb = #{optionb},optionc = #{optionc},optiond = #{optiond},
+            answer = #{answer},correct = #{correct},createtime = #{createtime}
+        </set>
+        <where>
+            qid = #{qid} and power = #{power}
+        </where>
+    </update>
+    <delete id="deleteQuestion">
+        delete from question
+        <where>
+            qid = #{qid}
+        </where>
+    </delete>
+    <!--试卷-->
+    <select id="findAllExamination" resultType="cn.edu.tfswufe.model.Examination">
+        select * from test
+        <where>
+            power = #{power}
+        </where>
+    </select>
+    <select id="findOneExamination" resultType="cn.edu.tfswufe.model.Examination">
+        select * from test
+        <where>
+            power = #{power} and testid = #{testid}
+        </where>
+    </select>
+    <select id="findTeacherTestPaperContent" resultType="cn.edu.tfswufe.model.TeacherTestPaper">
+        select t.testid,t.qid,q.questiontype,q.title,q.optiona,q.optionb,q.optionc,q.optiond,q.answer,q.correct
+        from teachertestpaper t,question q
+        <where>
+            t.qid = q.qid and t.testid = #{testid}
+        </where>
+    </select>
+    <select id="findOneTeacherTestPaperContent" resultType="cn.edu.tfswufe.model.TeacherTestPaper">
+        select t.testid,t.qid,q.questiontype,q.title,q.optiona,q.optionb,q.optionc,q.optiond,q.answer,q.correct
+        from teachertestpaper t,question q
+        <where>
+            t.qid = q.qid and t.testid = #{testid} and t.qid = #{qid}
+        </where>
+    </select>
+    <insert id="addExamination">
+        insert into test values (#{testid},#{testtitle},#{power},#{crid})
+    </insert>
+
+    <insert id="addQuestionToExamination">
+        insert into teachertestpaper values (#{testid},#{qid})
+    </insert>
+    <delete id="deleteQuestionToExamination">
+        delete from teachertestpaper
+        <where>
+            testid = #{testid} and qid = #{qid}
+        </where>
+    </delete>
+    <delete id="deleteExamination">
+        delete from test
+        <where>
+            testid = #{testid}
+        </where>
+    </delete>
+    <delete id="deleteTeacherTestPaperContent">
+        delete from teachertestpaper
+        <where>
+            testid = #{testid}
+        </where>
+    </delete>
+    <!--发布试卷-->
+    <select id="findALLTestToStudent" resultType="cn.edu.tfswufe.model.TestToStudent">
+        select t1.testid,t1.testtitle,c.classname,t2.cid,t2.crid from test t1,testtostudent t2,class c
+        <where>
+            t2.power = 1 and t1.power = #{power} and t1.testid = t2.testid and t2.cid = c.cid
+        </where>
+    </select>
+    <select id="findTestPower" resultType="cn.edu.tfswufe.model.TestToStudent">
+        select power from testtostudent
+        <where>
+            testid = #{testid} and cid = #{cid} and crid = #{crid}
+        </where>
+    </select>
+    <insert id="testToStudent">
+        insert into testtostudent values (#{testid},#{cid},#{crid},#{power})
+    </insert>
+    <update id="updateTestToStudent">
+        update testtostudent
+        <set>
+            power = #{power}
+        </set>
+        <where>
+            testid = #{testid} and cid = #{cid} and crid = #{crid}
+        </where>
+    </update>
+    <delete id="deleteTestToStudent">
+        delete from testtostudent
+        <where>
+            testid = #{testid}
+        </where>
+    </delete>
+    <!--评阅试卷-->
+    <select id="findStudentAnswer" resultType="cn.edu.tfswufe.model.StudentAnswer">
+        select * from studentanswer
+        <where>
+            sno = #{sno} and testid = #{testid}
+        </where>
+    </select>
+    <select id="findStudentTestOneAnswer" resultType="cn.edu.tfswufe.model.StudentAnswer">
+        select * from studentanswer
+        <where>
+            sno = #{sno} and testid = #{testid} and qid = #{qid}
+        </where>
+    </select>
+    <update id="reviewStudentTest">
+        update studentanswer
+        <set>
+            correct = #{correct}
+        </set>
+        <where>
+            sno = #{sno} and testid = #{testid} and qid = #{qid}
+        </where>
+    </update>
+    <update id="score">
+        update testpaper
+        <set>
+            grade = #{grade}
+        </set>
+        <where>
+            testid = #{testid} and sno = #{sno}
+        </where>
+    </update>
+    <!--个人信息-->
+    <update id="updateTeacher">
+        update status
+        <set>
+            password = #{password}
+        </set>
+        <where>
+            uid = #{uid}
+        </where>
+    </update>
+    <select id="findLectureByTidNoRepeat" resultType="cn.edu.tfswufe.model.Lecture">
+        select l.crid,cr.crname from
+        lecture l,course cr,class c
+        <where>
+            tid = #{tid} and l.cid = c.cid and l.crid = cr.crid
+        </where>
+        group by l.crid
+    </select>
+    <delete id="deleteTestPaper">
+        delete from testpaper
+        <where>
+            testid = #{testid}
+        </where>
+    </delete>
+    <delete id="deleteStudentAnswer">
+        delete from studentanswer
+        <where>
+            testid = #{testid}
+        </where>
+    </delete>
+    <select id="findAllMyTeachingClass" resultType="cn.edu.tfswufe.model.Lecture">
+        select l.tid,l.cid,c.classname from
+        lecture l,class c
+        <where>
+            tid = #{tid} and l.cid = c.cid
+        </where>
+        group by l.cid,l.tid
+    </select>
+    <select id="findTestByCridAndCid" resultType="cn.edu.tfswufe.model.TestToStudent">
+        select l.cid,l.crid,c.classname,cr.crname,t.testid,t.testtitle from
+        lecture l,test t,class c,course cr
+        <where>
+            l.tid = #{tid} and l.crid = t.crid and c.cid = l.cid and cr.crid = l.crid
+        </where>
+    </select>
+    <select id="findAllTestToClass" resultType="cn.edu.tfswufe.model.TestPaper">
+        select tp.testid,tp.sno,tp.grade,t1.testtitle,st.sname from
+        testpaper tp,student st,classandcourse c2,test t1
+        <where>
+            tp.testid = #{testid} and tp.sno = st.sno and st.cid = #{cid}
+            and st.cid = c2.cid and c2.crid = #{crid} and tp.testid = t1.testid
+        </where>
+    </select>
+    <select id="findTeacherTestPaper" resultType="cn.edu.tfswufe.model.TeacherTestPaper">
+        select t.testtitle,sa.sno,sa.testid,sa.qid,sa.myanswer,q.questiontype,q.title,
+        q.optiona,q.optionb,q.optionc,q.optiond,q.answer,q.correct from
+        studentanswer sa,question q,test t
+        <where>
+            sa.testid = #{testid} and sa.sno = #{sno} and q.qid = sa.qid and sa.testid = t.testid
+        </where>
+        order by myanswer
+    </select>
+</mapper>
