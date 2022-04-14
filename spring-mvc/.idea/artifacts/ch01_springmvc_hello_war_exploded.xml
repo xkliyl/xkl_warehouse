@@ -1,0 +1,23 @@
+<component name="ArtifactManager">
+  <artifact type="exploded-war" name="ch01-springmvc-hello:war exploded">
+    <output-path>$PROJECT_DIR$/../spring-course/ch01-springmvc-hello/ch01-springmvc-hello/target/ch01-springmvc-hello</output-path>
+    <properties id="maven-jee-properties">
+      <options>
+        <exploded>true</exploded>
+        <module>ch01-springmvc-hello</module>
+        <packaging>war</packaging>
+      </options>
+    </properties>
+    <root id="root">
+      <element id="directory" name="WEB-INF">
+        <element id="directory" name="classes">
+          <element id="module-output" name="ch01-springmvc-hello" />
+        </element>
+      </element>
+      <element id="directory" name="META-INF">
+        <element id="file-copy" path="$PROJECT_DIR$/../spring-course/ch01-springmvc-hello/ch01-springmvc-hello/target/ch01-springmvc-hello/META-INF/MANIFEST.MF" />
+      </element>
+      <element id="javaee-facet-resources" facet="ch01-springmvc-hello/web/Web" />
+    </root>
+  </artifact>
+</component>

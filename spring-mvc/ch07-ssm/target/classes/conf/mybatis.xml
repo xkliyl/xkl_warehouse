@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE configuration
+        PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-config.dtd">
+<configuration>
+
+
+
+    <typeAliases>
+        <!--<typeAlias type="全限定名称" alias="别名"/>-->
+        <package name="com.tfswufe.domain"/>
+    </typeAliases>
+
+    <mappers>
+        <package name="com.tfswufe.dao"/>
+        <!--<package name="mapper文件所在包名"/>
+        使用package的要求：
+        1.mapper文件名和dao接口名要完全一样，包括大小写
+        2.mapper文件和dao接口必须在同一目录-->
+    </mappers>
+</configuration>
